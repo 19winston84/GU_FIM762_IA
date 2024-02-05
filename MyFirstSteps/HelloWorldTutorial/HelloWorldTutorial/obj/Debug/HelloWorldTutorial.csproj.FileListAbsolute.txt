@@ -1,0 +1,9 @@
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\bin\Debug\HelloWorldTutorial.exe.config
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\bin\Debug\HelloWorldTutorial.exe
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\bin\Debug\HelloWorldTutorial.pdb
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\obj\Debug\HelloWorldTutorial.csproj.AssemblyReference.cache
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\obj\Debug\HelloWorldTutorial.Properties.Resources.resources
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\obj\Debug\HelloWorldTutorial.csproj.GenerateResource.cache
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\obj\Debug\HelloWorldTutorial.csproj.CoreCompileInputs.cache
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\obj\Debug\HelloWorldTutorial.exe
+\\Mac\Home\Documents\Github\GU_FIM762_IA\MyFirstSteps\HelloWorldTutorial\HelloWorldTutorial\obj\Debug\HelloWorldTutorial.pdb

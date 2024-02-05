@@ -1,4 +1,12 @@
 {
-  "ExpandedNodes": [],
+  "ExpandedNodes": [
+    "",
+    "\\Assignment 1",
+    "\\Assignment 1\\Problem 1.1",
+    "\\Assignment 1\\Problem 1.1\\Src1.1",
+    "\\Assignment 1\\Problem 1.1\\Src1.1\\POSTaggingSolution",
+    "\\Assignment 1\\Problem 1.1\\Src1.1\\POSTaggingSolution\\POSTaggingApplication"
+  ],
+  "SelectedNode": "\\Assignment 1\\Problem 1.1\\Src1.1\\POSTaggingSolution\\POSTaggingApplication\\Program.cs",
   "PreviewInSolutionExplorer": false
 }
