@@ -8,7 +8,11 @@ namespace NLP
 {
     public class Token
     {
-        // get; and set; allows for setting a value but also to ask for the value.
+        // No Field
+        
+        // No Constructor
+        
+        // Both are properties
         public string Spelling { get; set; }
 
         public string POSTag { get; set; }

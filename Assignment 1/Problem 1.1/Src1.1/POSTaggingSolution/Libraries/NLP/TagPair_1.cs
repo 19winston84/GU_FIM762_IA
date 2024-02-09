@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace NLP
 {
-    public class Sentence
+    public class TagPair
     {
-        // Field. Fields are used to store data.
         private List<TokenData> tokenDataList;
 
-        // Constructor
-        public Sentence()
+        public TagPair()
         {
-            tokenDataList = new List<TokenData>();  
+            tokenDataList = new List<TokenData>();
         }
 
-        // Property. Used to expose the Field to public access. 
         public List<TokenData> TokenDataList
         {
             get { return tokenDataList; }

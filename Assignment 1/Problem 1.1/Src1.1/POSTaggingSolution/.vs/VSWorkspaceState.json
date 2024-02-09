@@ -3,9 +3,8 @@
     "",
     "\\Libraries",
     "\\Libraries\\NLP",
-    "\\Libraries\\NLP\\POS",
-    "\\POSTaggingApplication"
+    "\\Libraries\\NLP\\POS"
   ],
-  "SelectedNode": "\\Libraries\\NLP\\Sentence.cs",
+  "SelectedNode": "\\Libraries\\NLP\\Token.cs",
   "PreviewInSolutionExplorer": false
 }

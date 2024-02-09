@@ -41,10 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionInstructions.cs" />
+    <Compile Include="ConvertPOSTags.cs" />
     <Compile Include="NGrams\NGram.cs" />
     <Compile Include="POS\POSDataSet.cs" />
     <Compile Include="POS\Taggers\POSTagger.cs" />
     <Compile Include="Sentence.cs" />
+    <Compile Include="TagConversionPair.cs" />
     <Compile Include="TextClassification\PerceptronClassifier.cs" />
     <Compile Include="TextClassification\TextClassificationDataItem.cs" />
     <Compile Include="TextClassification\TextClassificationDataSet.cs" />
@@ -53,6 +56,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenData.cs" />
     <Compile Include="Tokenization\Tokenizer.cs" />
+    <Compile Include="UnigramTagger.cs" />
     <Compile Include="Vocabulary.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

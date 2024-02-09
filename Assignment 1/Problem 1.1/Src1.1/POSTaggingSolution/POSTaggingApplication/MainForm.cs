@@ -15,16 +15,22 @@ using NLP.POS.Taggers;
 namespace POSTaggingApplication
 {
     public partial class MainForm : Form
+        
     {
+        
+        // Field
         private const string TEXT_FILE_FILTER = "Text files (*.txt)|*.txt";
         private POSDataSet completeDataSet = null;
         private POSDataSet trainingDataSet = null;
         private POSDataSet testDataSet = null;
         private List<TokenData> vocabulary = null;
+        private ConversionInstructions completeConversionData = null;
+        private UnigramTagger unigramTagger = null;
 
         public MainForm()
         {
             InitializeComponent();
+            resultsListBox.Font = new Font("Consolas", 11);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -78,8 +84,6 @@ namespace POSTaggingApplication
                 }
             }
         }
-       
-
 
         private List<TokenData> GenerateVocabulary(POSDataSet dataSet)
         {
@@ -138,43 +142,37 @@ namespace POSTaggingApplication
 
         private void loadTagConversionDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Write code here: This method should load the tag conversion file. You must
-            // represent the mappings somehow, so that the various tags in Brown set
-            // can be mapped to the universal tag set. For example, one can maintain
-            // a list with rows containing two elements (e.g. List<string[2]>, or List<List<string>>, where
-            // the inner list should then contain two elements): The Brown tag and the corresponding
-            // Universal tag, e.g.,
-            //
-            // VBZ -> VERB (verb in 3rd person present tense)
-            // VB  -> VERB (verb in infinitive form)
-            // NN  -> NOUN (noun in singular form)
-            // NNS -> NOUN (noun in plural form) 
-            // 
-            // ...and so on. 
-            // An even more elegant (and more re-usable) way is to define a class called, for example, POSTagConverter,
-            // with a Convert method that takes a tag as input and outputs the converted tags.
-            // Note that, since the data sets are not very large, you don't need to care much about the speed of the code.
-            // Thus when searching for an input tag, you can use the Find() method instead of, say, a binary search 
-            // or a Dictionary (but it's up to you).
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = TEXT_FILE_FILTER;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+
                     // reads the whole universalTag file 
-                    StreamReader fileReader = new StreamReader(openFileDialog.FileName);    
+                    StreamReader fileReader = new StreamReader(openFileDialog.FileName);
+                    ConversionInstructions completeTagConversionData = new ConversionInstructions();
                     while (!fileReader.EndOfStream)
                     {
                         // creating a string of the current line.
                         string line = fileReader.ReadLine();
                         // Process data here ...
                         if (line != "")
-                        {
-                            List<string> lineSplit = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                            // In lineSplit there is now 'oldTag',
+                        { 
+                            List<string> oldTagNewTag = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            TagConversionPair tagConversionPair = new TagConversionPair();
+                            if (oldTagNewTag.Count == 2) // Needed in order to ignore the very last line that just contains "_.".
+                            {
+                                tagConversionPair.OldTag = oldTagNewTag[0].Trim(); 
+                                tagConversionPair.NewTag = oldTagNewTag[1].Trim();
+                            }
+                            completeTagConversionData.TagConversionList.Add(tagConversionPair);
                         }
                     }
+                    fileReader.Close();
+                    resultsListBox.Items.Add("Loaded the Brown To Universal Tag Map and created " + completeTagConversionData.TagConversionList.Count.ToString() + " conversion pairs.");
+                    completeConversionData = completeTagConversionData;
                 }
+                
             }
 
             // Keep these lines: They will activate the conversion button, provided that the
@@ -197,6 +195,18 @@ namespace POSTaggingApplication
             // 
             // Method call: 
             // completeDataSet.ConvertPOSTags(... <suitable input, namely the tag conversion data> ...); // this you have to write ...
+            
+            if (completeConversionData == null || !completeConversionData.TagConversionList.Any())
+            {
+                resultsListBox.Items.Add("Tag conversion data has not been loaded.");
+                return; // Stop further execution
+            }
+
+            // Proceed with conversion
+            completeDataSet.ConvertPOSTags(completeConversionData);
+            // Continue with the rest of the method...
+            resultsListBox.Items.Add("The Brown tags are now converted to 12 universal tags.");
+
 
             // Next, build the vocabulary, using the 12 universal tags (this method you get for free! :) )
             vocabulary = GenerateVocabulary(completeDataSet);
@@ -207,61 +217,129 @@ namespace POSTaggingApplication
 
         private void splitDataSetButton_Click(object sender, EventArgs e)
         {
-            // Split the data set into a training set and a test set (a validation
-            // set is not needed here, since no optimization is carried out - the
-            // unigram tagger is as it is - no optimization required or possible).
-            // The result should be 
-            //
-            //  trainingDataSet (containing, by default, 80% of the sentences)
-            //
-            //  testDataSet (contaning the remaining 20% of the sentences)
-            //
             double splitFraction;
             Boolean splitFractionOK = double.TryParse(splitFractionTextBox.Text, out splitFraction);
             if (splitFractionOK && splitFraction > 0 && splitFraction <= 1)
             {
-                // NOTE: The most elegant way to do this is to write a static method in the POSDataSet class,
-                // such as, POSDataSet.Split(POSDataSet completeDataSet, double splitFraction).
-                // One should always strive to put methods *where they naturally belong*. In this case,
-                // the split method belongs with the POSDataSet. One can also, of course,
-                // just write the code here (in this method), instantiating the trainingDataSet and
-                // the testSet, and then just adding sentences, but the most elegant way is
-                // to define a method in the POSDataSet class. You can read about static
-                // methods on MSDN or StackOverflow, for example
+                // Assuming you have an instance of POSDataSet called completeDataSet
+                var (trainingData, testData) = POSDataSet.Split(completeDataSet, splitFraction);
 
-                // Keep these lines: It will activate the statistics generation button and the unigram tagger generation button,
-                // once the data set has been split.
+                // Now, trainingDataSet and testDataSet contain the split data
+
+                // Activate buttons as before
                 generateStatisticsButton.Enabled = true;
                 generateUnigramTaggerButton.Enabled = true;
+
+                trainingDataSet = trainingData;
+                testDataSet = testData;
+
+                resultsListBox.Items.Add("The complete data set was successfully split 80/20.");
             }
             else
             {
-                MessageBox.Show("Incorrectly specified split fraction", "Error", MessageBoxButtons.OK);
+                resultsListBox.Items.Add("Incorrectly specified split fraction");
             }
+            
+
         }
 
         private void generateStatisticsButton_Click(object sender, EventArgs e)
         {
-            resultsListBox.Items.Clear(); // Keep this line.
+            resultsListBox.Items.Clear(); // Clears the listBox before adding new information.
 
-            // Write code here for carrying out all the steps described in 
-            // Assignment 1.1a, using the (note!) training set
+            // Initialize a dictionary to count instances of each POS tag
+            Dictionary<string, int> posTagCounts = new Dictionary<string, int>();
+            // Initialize a dictionary to map each word to its set of unique POS tags
+            Dictionary<string, HashSet<string>> wordToTags = new Dictionary<string, HashSet<string>>();
+            int totalCount = 0;
 
-            // Put different parts of the assignment (different subtasks) in
-            // separate methods, in order to keep the code neat and tidy.
+            foreach (Sentence sentence in trainingDataSet.Sentences)
+            {
+                totalCount += sentence.TokenDataList.Count;
+                foreach (TokenData tokenData in sentence.TokenDataList)
+                {
+                    string word = tokenData.Token.Spelling.ToLower(); // Normalize word to lowercase
+                    string posTag = tokenData.Token.POSTag;
 
-            // All the results should be printed *neatly* to the screen, in the
-            // associated listBox (resultsListBox), after first clearing it.
-            // To add things to the result listbox, one uses the command:
-            // resultListBox.Items.Add(...);
-            // where ... is a text string. Include empty lines with
-            // resultListBox.Items.Add(" ");
-            // where appropriate (e.g., between different
-            // subtasks, to make the output more readable).
+                    // Update posTagCounts
+                    if (posTagCounts.ContainsKey(posTag))
+                    {
+                        posTagCounts[posTag]++;
+                    }
+                    else
+                    {
+                        posTagCounts.Add(posTag, 1);
+                    }
+
+                    // Update wordToTags
+                    if (wordToTags.ContainsKey(word))
+                    {
+                        wordToTags[word].Add(posTag);
+                    }
+                    else
+                    {
+                        wordToTags[word] = new HashSet<string> { posTag };
+                    }
+                }
+            }
+
+            // Count how many words are associated with 1, 2, 3, ... different POS tags
+            Dictionary<int, int> tagsToWordCount = new Dictionary<int, int>();
+            foreach (var entry in wordToTags)
+            {
+                int numberOfTags = entry.Value.Count;
+                if (tagsToWordCount.ContainsKey(numberOfTags))
+                {
+                    tagsToWordCount[numberOfTags]++;
+                }
+                else
+                {
+                    tagsToWordCount.Add(numberOfTags, 1);
+                }
+            }
+
+            // Determine the maximum length for alignment
+            int maxPosTagLength = posTagCounts.Keys.Any() ? posTagCounts.Keys.Max(tag => tag.Length) : 0;
+            int maxCountLength = posTagCounts.Values.Any() ? posTagCounts.Values.Max().ToString().Length : 0;
+
+            // Display total count summary with alignment
+            string totalCountLine = $"Total tokens:".PadRight(maxPosTagLength + maxCountLength + 4) + $"{totalCount}";
+            resultsListBox.Items.Add(totalCountLine);
+
+            // Display the counts and proportions for each POS tag, aligned
+            foreach (var posTagCount in posTagCounts)
+            {
+                double proportion = (double)posTagCount.Value / totalCount;
+                string posTagPadded = posTagCount.Key.PadRight(maxPosTagLength);
+                string countPadded = posTagCount.Value.ToString().PadRight(maxCountLength);
+                resultsListBox.Items.Add($"{posTagPadded}: {countPadded} ({proportion:P2})");
+            }
+
+            // New Section: Display the fraction of words associated with different numbers of POS tags
+            resultsListBox.Items.Add(string.Empty); // Add an empty line for better readability
+            resultsListBox.Items.Add("Words by number of associated POS tags:");
+            foreach (var tagCountEntry in tagsToWordCount.OrderBy(tagCount => tagCount.Key))
+            {
+                double fraction = (double)tagCountEntry.Value / wordToTags.Count;
+                resultsListBox.Items.Add($"{tagCountEntry.Key} tags: {tagCountEntry.Value} words ({fraction:P2})");
+            }
         }
-
+        
         private void generateUnigramTaggerButton_Click(object sender, EventArgs e)
         {
+            var unigramTaggerBaby = new UnigramTagger();
+            unigramTaggerBaby.Train(trainingDataSet);
+
+            // Assuming you have a way to store the unigramTagger for later use
+            // For example, if you have a field in your class to store it:
+            // this.unigramTagger = unigramTagger;
+
+            resultsListBox.Items.Clear();
+            resultsListBox.Items.Add("Unigram tagger has been generated and trained.");
+
+            // Keep this line: It will activate the evaluation button for the unigram tagger
+            runUnigramTaggerButton.Enabled = true;
+
             // Write code here for generating a unigram tagger, again using the *training* set;
             // Here, you *should* Define a class Unigram tagger derived from (inheriting) the base class
             // POSTagger in the NLP library included in this solution.
@@ -276,23 +354,63 @@ namespace POSTaggingApplication
 
             // Keep this line: It will activate the evaluation button for the unigram tagger
             runUnigramTaggerButton.Enabled = true;
+            unigramTagger = unigramTaggerBaby;
         }
 
         private void runUnigramTaggerButton_Click(object sender, EventArgs e)
         {
-            resultsListBox.Items.Clear(); // Keep this line.
+            resultsListBox.Items.Clear(); // Clear the list box before displaying new results
 
-            // Write code here for running the unigram tagger over the test set.
-            // All the results should be printed *neatly* to the screen, in the
-            // associated listBox (resultsListBox), after first clearing it.
+            if (testDataSet == null || unigramTagger == null)
+            {
+                resultsListBox.Items.Add("Test data set or Unigram tagger is not initialized.");
+            }
 
-            // Note again that, for most POS taggers, it matters whether or not a word is
-            // (say) the first word or the last word of a sentence, but not for the
-            // unigram tagger. Thus, when you run the unigram tagger the "sentence"
-            // that goes into the Tag() method can simply be the entire list of
-            // tokens in the test set (which you must extract from the testSet -
-            // remember that the test set is a list of TokenCount, whereas you
-            // here need a list of Token (it is easy to do so`)).
+            int correctPredictions = 0;
+            int totalPredictions = 0;
+
+            // Loop through each sentence in the test data set
+            foreach (var sentence in testDataSet.Sentences)
+            {
+                // Use the UnigramTagger to tag the sentence
+                List<string> predictedTags = unigramTagger.Tag(sentence);
+
+                // Prepare the sentence and its tags for display (optional, depending on your display needs)
+                StringBuilder sentenceDisplay = new StringBuilder();
+
+                for (int i = 0; i < sentence.TokenDataList.Count; i++)
+                {
+                    // Increment total predictions
+                    totalPredictions++;
+
+                    // Check if the predicted tag matches the actual tag
+                    if (predictedTags[i] == sentence.TokenDataList[i].Token.POSTag)
+                    {
+                        correctPredictions++;
+                    }
+
+                    // Append each word along with its predicted tag for display purposes
+                    sentenceDisplay.Append($"{sentence.TokenDataList[i].Token.Spelling}_{predictedTags[i]} ");
+                }
+
+                // Optionally add the sentence display to a list box or other UI element
+                // resultsListBox.Items.Add(sentenceDisplay.ToString());
+            }
+
+            if (totalPredictions > 0)
+            {
+                // Calculate accuracy
+                double accuracy = (double)correctPredictions / totalPredictions;
+
+                // Display accuracy
+                resultsListBox.Items.Add($"The unigram accuracy is {accuracy:P2}");
+            }
+            else
+            {
+                resultsListBox.Items.Add("No predictions were made.");
+            }
         }
+
+
     }
 }
