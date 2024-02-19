@@ -6,16 +6,10 @@ using System.Threading.Tasks;
 
 namespace NLP
 {
-    
-    public class ConvertPOSTags
+    public class Token
     {
+        public string Spelling { get; set; }
 
-        public ConvertPOSTags() 
-        { 
-        
-        
-        }
+        public string POSTag { get; set; }
     }
-
-
 }

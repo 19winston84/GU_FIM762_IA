@@ -1,0 +1,9 @@
+LoadDataSet(): Print whole review texts by progressListBox.Items.Add('dataSet.ItemList[i].Text');
+
+This is only a method thus the three data sets will be stored in trainingSet, validationSet, and testSet.
+Since they are created by the function LoadDataSet() they should still be callable by the following command:
+trainingSet.ItemList[i].Text (Tested: TRUE) 
+
+To handle the abbreviations, check for the 20 most common abbreviations in the english language and add them to an exclusion list.
+
+Every word need to have an assigned label that tells if the word was used in a positive or negative context.

@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConversionInstructions.cs" />
-    <Compile Include="ConvertPOSTags.cs" />
     <Compile Include="NGrams\NGram.cs" />
     <Compile Include="POS\POSDataSet.cs" />
     <Compile Include="POS\Taggers\POSTagger.cs" />

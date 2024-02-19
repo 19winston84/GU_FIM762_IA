@@ -221,11 +221,9 @@ namespace POSTaggingApplication
             Boolean splitFractionOK = double.TryParse(splitFractionTextBox.Text, out splitFraction);
             if (splitFractionOK && splitFraction > 0 && splitFraction <= 1)
             {
-                // Assuming you have an instance of POSDataSet called completeDataSet
+                
                 var (trainingData, testData) = POSDataSet.Split(completeDataSet, splitFraction);
-
-                // Now, trainingDataSet and testDataSet contain the split data
-
+                
                 // Activate buttons as before
                 generateStatisticsButton.Enabled = true;
                 generateUnigramTaggerButton.Enabled = true;
@@ -323,8 +321,29 @@ namespace POSTaggingApplication
                 double fraction = (double)tagCountEntry.Value / wordToTags.Count;
                 resultsListBox.Items.Add($"{tagCountEntry.Key} tags: {tagCountEntry.Value} words ({fraction:P2})");
             }
+
+            // Initialize a list to store words with 6 tokens
+            List<string> wordsWithSixTokens = new List<string>();
+
+            // Iterate over the wordToTags dictionary
+            foreach (var entry in wordToTags)
+            {
+                // Check if the set of POS tags for the word contains 6 elements
+                if (entry.Value.Count == 6)
+                {
+                    // Add the word to the list
+                    wordsWithSixTokens.Add(entry.Key);
+                }
+            }
+
+            // Output the list of words with 6 tokens
+            foreach (string word in wordsWithSixTokens)
+            {
+                resultsListBox.Items.Add($"The word with six tokens is {word}");
+            }
+
         }
-        
+
         private void generateUnigramTaggerButton_Click(object sender, EventArgs e)
         {
             var unigramTaggerBaby = new UnigramTagger();
@@ -368,19 +387,12 @@ namespace POSTaggingApplication
 
             int correctPredictions = 0;
             int totalPredictions = 0;
-
-            // Loop through each sentence in the test data set
             foreach (var sentence in testDataSet.Sentences)
             {
-                // Use the UnigramTagger to tag the sentence
+                
                 List<string> predictedTags = unigramTagger.Tag(sentence);
-
-                // Prepare the sentence and its tags for display (optional, depending on your display needs)
-                StringBuilder sentenceDisplay = new StringBuilder();
-
                 for (int i = 0; i < sentence.TokenDataList.Count; i++)
                 {
-                    // Increment total predictions
                     totalPredictions++;
 
                     // Check if the predicted tag matches the actual tag
@@ -388,13 +400,9 @@ namespace POSTaggingApplication
                     {
                         correctPredictions++;
                     }
-
-                    // Append each word along with its predicted tag for display purposes
-                    sentenceDisplay.Append($"{sentence.TokenDataList[i].Token.Spelling}_{predictedTags[i]} ");
                 }
 
-                // Optionally add the sentence display to a list box or other UI element
-                // resultsListBox.Items.Add(sentenceDisplay.ToString());
+                
             }
 
             if (totalPredictions > 0)
