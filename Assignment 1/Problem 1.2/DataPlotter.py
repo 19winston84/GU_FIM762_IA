@@ -2,14 +2,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Read the CSV file
-data = pd.read_csv('accuracyData.csv')
+data = pd.read_csv('accuracyData1.csv')
 
 # Extract the training and validation accuracies
 training_accuracy = data['Training accuracy']
 validation_accuracy = data['Validation accuracy']
 
 # Create a line plot
-plt.axhline(y=0.95, color='k', linestyle='--', linewidth=0.5)
+plt.axhline(y=0.955, color='k', linestyle='--', linewidth=0.5)
 plt.plot(training_accuracy, label='Training Accuracy')
 plt.plot(validation_accuracy, label='Validation Accuracy')
 

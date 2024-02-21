@@ -7,6 +7,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -356,18 +357,22 @@ namespace PerceptronClassifierApplication
             stopOptimizerButton.Enabled = true; // Enable the stop button
 
         }
+        
         private void ComputationLoop()
         {
             int firstSave = 1;
             int epoch = 0;
             while (!shouldStop) // Continue until stop signal is received
-            {
-                perceptronOptimizer.Optimize();
-                trainingEvaluator.Weights = perceptronOptimizer.Weights;
-                trainingEvaluator.Evaluate();
+                {
+                    perceptronOptimizer.Optimize();
+                    trainingEvaluator.Weights = perceptronOptimizer.Weights;
+                    trainingEvaluator.Evaluate();
 
-                validationEvaluator.Weights = perceptronOptimizer.Weights;
-                validationEvaluator.Evaluate();
+                    validationEvaluator.Weights = perceptronOptimizer.Weights;
+                    validationEvaluator.Evaluate();
+
+                    testEvaluator.Weights = perceptronOptimizer.Weights;
+                    testEvaluator.Evaluate();
 
                 if (epoch % 10 == 0)
                 {
@@ -401,10 +406,12 @@ namespace PerceptronClassifierApplication
         {
             int firstSave = 1;
             int epoch = 0;
-            string csvFilePath = "/Users/fredriktsitje/Documents/Github/GU_FIM762_IA/Assignment 1/Problem 1.2/accuracyData.csv"; // Path to your CSV file
+            string csvFilePath = "accuracyData1.csv"; // Path to your CSV file
+            string highestLowestCsvFilePath = "10highestAndLowestWords.csv"; // Path to your second CSV file
 
-            // Create or append to the CSV file
+            // Create or append to the accuracy CSV file
             using (StreamWriter sw = File.AppendText(csvFilePath))
+            using (StreamWriter highestLowestSw = new StreamWriter(highestLowestCsvFilePath))
             {
                 while (!shouldStop) // Continue until stop signal is received
                 {
@@ -418,9 +425,51 @@ namespace PerceptronClassifierApplication
                     testEvaluator.Weights = perceptronOptimizer.Weights;
                     testEvaluator.Evaluate();
 
-                    // Write accuracy values to the CSV file
+                    // Write accuracy values to the accuracy CSV file
                     string accuracyData = $"{epoch},{trainingEvaluator.Accuracy},{validationEvaluator.Accuracy}, {testEvaluator.Accuracy}";
                     sw.WriteLine(accuracyData);
+
+                    if (epoch > firstSave)
+                    {
+                        if (previousValidationAccuracy < validationEvaluator.Accuracy)
+                        {
+                            previousValidationAccuracy = validationEvaluator.Accuracy;
+                            trainedWeights = perceptronOptimizer.Weights;
+                        }
+                    }
+
+                    // Write highest and lowest values to the highestLowestCsvFilePath CSV file
+                    testEvaluator.Weights = trainedWeights;
+                    if (testEvaluator.Weights != null)
+                    {
+                        var highestIndexes = testEvaluator.Weights
+                            .Select((value, index) => new { Value = value, Index = index })
+                            .OrderByDescending(item => item.Value)
+                            .Take(10)
+                            .ToList();
+                        var lowestIndexes = testEvaluator.Weights
+                        .Select((value, index) => new { Value = value, Index = index })
+                        .OrderBy(item => item.Value)
+                        .Take(10)
+                        .ToList();
+
+                        foreach (var item in highestIndexes)
+                        {
+                            string word = vocabulary.GetString(item.Index);
+                            string formattedValue = item.Value.ToString("0.000").PadRight(12); // Adjust padding as needed
+                            highestLowestSw.WriteLine($"Epoch {epoch}, Highest, Index: {item.Index}, Value: {formattedValue}, Word: {word}");
+                        }
+
+                        // Write lowest values to the CSV file
+                        foreach (var item in lowestIndexes)
+                        {
+                            string word = vocabulary.GetString(item.Index);
+                            string formattedValue = item.Value.ToString("0.000").PadRight(12); // Adjust padding as needed
+                            highestLowestSw.WriteLine($"Epoch {epoch}, Lowest, Index: {item.Index}, Value: {formattedValue}, Word: {word}");
+                        }
+                        
+                    }
+                    epoch++;
 
                     if (epoch % 10 == 0)
                     {
@@ -448,6 +497,7 @@ namespace PerceptronClassifierApplication
 
             ThreadSafeHandleDone();
         }*/
+
 
         private void ThreadSafeHandleDone()
         {
@@ -482,7 +532,7 @@ namespace PerceptronClassifierApplication
             stopOptimizerButton.Enabled = false;
             shouldStop = true; // Signal stop to computation loop
 
-            testEvaluator.Weights = trainedWeights;
+            /*string outputFile = "10examples.csv";*/
             testEvaluator.Evaluate();
             // Stop the optimizer here.
             string testAccuracyFormatted = testEvaluator.Accuracy.ToString("F2") + "%";

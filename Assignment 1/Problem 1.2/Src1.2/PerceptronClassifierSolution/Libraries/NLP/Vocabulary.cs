@@ -34,6 +34,18 @@ namespace NLP
             }
         }
 
+        public string GetString(int Index)
+        {
+            foreach (var pair in WordIndex)
+            {
+                if (pair.Value == Index)
+                {
+                    return pair.Key;
+                }
+            }
+            return null; 
+        }
+
         public int GetIndex(string Word)
         {
             if (WordIndex.ContainsKey(Word))

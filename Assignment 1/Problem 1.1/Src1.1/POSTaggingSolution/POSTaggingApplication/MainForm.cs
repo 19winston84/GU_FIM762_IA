@@ -188,23 +188,8 @@ namespace POSTaggingApplication
 
         private void convertPOSTagsButton_Click(object sender, EventArgs e)
         {
-            // Write code here, such that the Brown tags are mapped to the 
-            // Universal tags (for the complete data set), using the representation described above 
-            // After running this method, all the tokens should be assigned
-            // one of the 12 Universal tags.
-            // 
-            // Method call: 
-            // completeDataSet.ConvertPOSTags(... <suitable input, namely the tag conversion data> ...); // this you have to write ...
-            
-            if (completeConversionData == null || !completeConversionData.TagConversionList.Any())
-            {
-                resultsListBox.Items.Add("Tag conversion data has not been loaded.");
-                return; // Stop further execution
-            }
-
-            // Proceed with conversion
             completeDataSet.ConvertPOSTags(completeConversionData);
-            // Continue with the rest of the method...
+            
             resultsListBox.Items.Add("The Brown tags are now converted to 12 universal tags.");
 
 
@@ -244,11 +229,8 @@ namespace POSTaggingApplication
         private void generateStatisticsButton_Click(object sender, EventArgs e)
         {
             resultsListBox.Items.Clear(); // Clears the listBox before adding new information.
-
-            // Initialize a dictionary to count instances of each POS tag
             Dictionary<string, int> posTagCounts = new Dictionary<string, int>();
-            // Initialize a dictionary to map each word to its set of unique POS tags
-            Dictionary<string, HashSet<string>> wordToTags = new Dictionary<string, HashSet<string>>();
+            Dictionary<string, List<string>> wordToTags = new Dictionary<string, List<string>>();
             int totalCount = 0;
 
             foreach (Sentence sentence in trainingDataSet.Sentences)
@@ -272,11 +254,14 @@ namespace POSTaggingApplication
                     // Update wordToTags
                     if (wordToTags.ContainsKey(word))
                     {
-                        wordToTags[word].Add(posTag);
+                        if (!wordToTags[word].Contains(posTag))
+                        {
+                            wordToTags[word].Add(posTag);
+                        }
                     }
                     else
                     {
-                        wordToTags[word] = new HashSet<string> { posTag };
+                        wordToTags[word] = new List<string> { posTag };
                     }
                 }
             }
@@ -339,7 +324,7 @@ namespace POSTaggingApplication
             // Output the list of words with 6 tokens
             foreach (string word in wordsWithSixTokens)
             {
-                resultsListBox.Items.Add($"The word with six tokens is {word}");
+                resultsListBox.Items.Add($"The word with six tokens is '{word}'");
             }
 
         }
@@ -349,9 +334,6 @@ namespace POSTaggingApplication
             var unigramTaggerBaby = new UnigramTagger();
             unigramTaggerBaby.Train(trainingDataSet);
 
-            // Assuming you have a way to store the unigramTagger for later use
-            // For example, if you have a field in your class to store it:
-            // this.unigramTagger = unigramTagger;
 
             resultsListBox.Items.Clear();
             resultsListBox.Items.Add("Unigram tagger has been generated and trained.");
@@ -359,18 +341,7 @@ namespace POSTaggingApplication
             // Keep this line: It will activate the evaluation button for the unigram tagger
             runUnigramTaggerButton.Enabled = true;
 
-            // Write code here for generating a unigram tagger, again using the *training* set;
-            // Here, you *should* Define a class Unigram tagger derived from (inheriting) the base class
-            // POSTagger in the NLP library included in this solution.
-
-            // For the actual tagging (once the unigram tagger has been generated)
-            // you must override the Tag() method in the base class (POSTagger)).
-
-            // Note that, for most POS taggers, it matters whether or not a word is
-            // (say) the first word or the last word of a sentence, but not for the
-            // unigram tagger, so it is easy to write the Tag() method - it need not
-            // take into account the position of the word in the sentence.
-
+            
             // Keep this line: It will activate the evaluation button for the unigram tagger
             runUnigramTaggerButton.Enabled = true;
             unigramTagger = unigramTaggerBaby;
