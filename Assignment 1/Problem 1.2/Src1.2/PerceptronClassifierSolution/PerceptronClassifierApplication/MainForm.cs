@@ -111,13 +111,8 @@ namespace PerceptronClassifierApplication
         {
             Application.Exit();
         }
-
-
         private void GenerateVocabulary(List<Sentence> onlyTrainingDataSet)
         {
-            // Write a method that generates the vocabulary. Note that this
-            // should ONLY be done for the training set!
-            
             List<string> allWords = new List<string>();
             foreach (Sentence sentence in onlyTrainingDataSet) 
             {
@@ -136,16 +131,17 @@ namespace PerceptronClassifierApplication
             }
 
             vocabulary = tempVocabulary;
-            progressListBox.Items.Add("The vocabulary is generated on the trainingSet and contains " + vocabulary.GetCount() + " tokens.");
+
+            progressListBox.Items.Add("The vocabulary is generated on the trainingSet and contains " + vocabulary.GetCount() + " unique tokens.");
 
             
             // You must generate an instance of the Vocabulary class,
             // which you must also implement (a skeleton is available
             // in the NLP library)
         }
-
         private void tokenizeButton_Click(object sender, EventArgs e)
         {
+            progressListBox.Items.Clear();  
             List<Sentence> tempTokenizedTrainingSet = new List<Sentence>();
             Tokenizer tokenizer = new Tokenizer();
 
@@ -167,20 +163,11 @@ namespace PerceptronClassifierApplication
             tokenizedTrainingSet = tempTokenizedTrainingSet;
             progressListBox.Items.Add("Total tokenized training set reviews: " + tokenizedTrainingSet.Count);
             progressListBox.Items.Add("Total training set tokens: " + counterForTokens);
-
-            
-
-            indexButton.Enabled = true;
-            // Write code here for tokenizing the text. That is,
-            // implement the Tokenize() method in the Tokenizer class.
-
-
-            // First tokenize the training set:
-
+            progressListBox.Items.Add("");
 
 
             // Then build the vocabulary from the training set:
-            GenerateVocabulary(tokenizedTrainingSet);
+            
 
             // Next, tokenize the validation set:
             List<Sentence> tempTokenizedValidationSet = new List<Sentence>();
@@ -203,6 +190,7 @@ namespace PerceptronClassifierApplication
             tokenizedValidationSet = tempTokenizedValidationSet;
             progressListBox.Items.Add("Total tokenized validation set reviews: " + tokenizedValidationSet.Count);
             progressListBox.Items.Add("Total validation set tokens: " + counterForTokensValidation);
+            progressListBox.Items.Add("");
 
             // Add code here ..
 
@@ -230,15 +218,14 @@ namespace PerceptronClassifierApplication
             progressListBox.Items.Add("Total tokenized test set reviews: " + tokenizedTestSet.Count);
             progressListBox.Items.Add("Total test set tokens: " + counterForTokensTest);
 
-            //
-        }
+            progressListBox.Items.Add("");
+            GenerateVocabulary(tokenizedTrainingSet);
+            
 
+            indexButton.Enabled = true;
+        }
         private void indexButton_Click(object sender, EventArgs e)
         {
-            // Write code here for indexing the data sets to generate
-
-            // Index the training set, using the *training* set vocabulary (see above)
-
             int trainingCounter = 0;
             foreach (Sentence sentence in tokenizedTrainingSet)
             {
@@ -254,10 +241,6 @@ namespace PerceptronClassifierApplication
                 trainingSet.ItemList[trainingCounter].ReviewAsVocabularyIndexes = sentenceAsVocabularyIndexes;
                 trainingCounter++;
             }
-
-            
-            // Index the validation set, using the *training* set vocabulary (see above)
-            // Assign index = -1 if a given word does not exist in the training set.
 
             int validationCounter = 0;
             foreach (Sentence sentence in tokenizedValidationSet)
@@ -275,8 +258,6 @@ namespace PerceptronClassifierApplication
                 validationCounter++;
             }
 
-            // Index the test set, using the *training* set vocabulary (see above)
-            // Assign index = -1 if a given word does not exist in the training set.
             int testCounter = 0;
             foreach (Sentence sentence in tokenizedTestSet)
             {
@@ -294,10 +275,9 @@ namespace PerceptronClassifierApplication
             }
             
             progressListBox.Items.Clear();
-            progressListBox.Items.Add("The Indexing is finished now.");
+            progressListBox.Items.Add("The indexing is completed.");
             initializeOptimizerButton.Enabled = true;
         }
-
         private void initializeOptimizerButton_Click(object sender, EventArgs e)
         {
             PerceptronClassifier classifier = new PerceptronClassifier();
@@ -315,7 +295,7 @@ namespace PerceptronClassifierApplication
             
             int numberOfFeatures = vocabulary.GetLastIndex(); 
             progressListBox.Items.Clear();
-            progressListBox.Items.Add("The number of features is: " +  numberOfFeatures + "The last index of vocabulary is " + vocabulary.GetLastIndex());
+            /*progressListBox.Items.Add("The number of features is: " +  numberOfFeatures + " The last index of vocabulary is " + vocabulary.GetLastIndex());*/
             
             perceptronClassifier.Initialize(numberOfFeatures);
             perceptronOptimizer.Weights = perceptronClassifier.WeightList;
@@ -336,11 +316,8 @@ namespace PerceptronClassifierApplication
             startOptimizerButton.Enabled = true;
         }
 
-
-
         // Flag to signal stop the optimization
         private volatile bool shouldStop = false; 
-        
         private void ShowProgress(string progressInformation)
         {
             progressListBox.Items.Add(progressInformation);
@@ -357,8 +334,7 @@ namespace PerceptronClassifierApplication
             stopOptimizerButton.Enabled = true; // Enable the stop button
 
         }
-        
-        private void ComputationLoop()
+        /*private void ComputationLoop()
         {
             int firstSave = 1;
             int epoch = 0;
@@ -399,7 +375,7 @@ namespace PerceptronClassifierApplication
                 }
             }
             ThreadSafeHandleDone();
-        }
+        }*/
 
         //ComputationLoop() with data saver
         /*private void ComputationLoop()
@@ -498,6 +474,67 @@ namespace PerceptronClassifierApplication
             ThreadSafeHandleDone();
         }*/
 
+        private void ComputationLoop()
+        {
+            int firstSave = 1;
+            int epoch = 0;
+            string csvFilePath = "accuracyDataCompareToBERT.csv"; // Path to your CSV file
+
+            // Create or append to the accuracy CSV file
+            using (StreamWriter sw = File.AppendText(csvFilePath))
+            {
+                while (!shouldStop) // Continue until stop signal is received
+                {
+                    perceptronOptimizer.Optimize();
+                    trainingEvaluator.Weights = perceptronOptimizer.Weights;
+                    trainingEvaluator.Evaluate();
+
+                    validationEvaluator.Weights = perceptronOptimizer.Weights;
+                    validationEvaluator.Evaluate();
+
+                    testEvaluator.Weights = perceptronOptimizer.Weights;
+                    testEvaluator.Evaluate();
+
+                    // Write accuracy values to the accuracy CSV file
+                    string accuracyData = $"{epoch},{trainingEvaluator.Accuracy},{validationEvaluator.Accuracy}, {testEvaluator.Accuracy}";
+                    sw.WriteLine(accuracyData);
+
+                    if (epoch > firstSave)
+                    {
+                        if (previousValidationAccuracy < validationEvaluator.Accuracy)
+                        {
+                            previousValidationAccuracy = validationEvaluator.Accuracy;
+                            trainedWeights = perceptronOptimizer.Weights;
+                        }
+                    }
+
+                    if (epoch % 10 == 0)
+                    {
+                        string trainingAccuracyFormatted = trainingEvaluator.Accuracy.ToString("F6") + "%";
+                        string validationAccuracyFormatted = validationEvaluator.Accuracy.ToString("F6") + "%";
+
+                        string progressInformation = $"Epoch {epoch}: " +
+                                                      $"Training Set Accuracy: {trainingAccuracyFormatted} | " +
+                                                      $"Validation Set Accuracy: {validationAccuracyFormatted}";
+
+                        ThreadSafeShowProgress(progressInformation);
+                    }
+                    epoch++;
+
+                    if (epoch > firstSave)
+                    {
+                        if (previousValidationAccuracy < validationEvaluator.Accuracy)
+                        {
+                            previousValidationAccuracy = validationEvaluator.Accuracy;
+                            trainedWeights = perceptronOptimizer.Weights;
+                        }
+                    }
+                }
+            }
+
+            ThreadSafeHandleDone();
+        }
+
 
         private void ThreadSafeHandleDone()
         {
@@ -525,28 +562,91 @@ namespace PerceptronClassifierApplication
         {
             startOptimizerButton.Enabled = true; // Enable start button
             stopOptimizerButton.Enabled = false; // Disable stop button
-            progressListBox.Items.Add("Optimization stopped.");
         }
+
+        /*
+        private void stopOptimizerButton_Click(object sender, EventArgs e)
+            {
+            stopOptimizerButton.Enabled = false;
+            shouldStop = true; // Signal stop to computation loop
+
+            string outputFile = "10examples.csv";
+            testEvaluator.Weights = trainedWeights;
+
+            testEvaluator.MakeScores();
+
+            // Access the counts
+            int truePositiveCount = testEvaluator.truePositive;
+            int falsePositiveCount = testEvaluator.falsePositive;
+            int trueNegativeCount = testEvaluator.trueNegative;
+            int falseNegativeCount = testEvaluator.falseNegative;
+
+
+
+
+            testEvaluator.Evaluate();
+            
+            progressListBox.Items.Add("");
+            progressListBox.Items.Add("The optimization stopped on your demand.");
+            string testAccuracyFormatted = testEvaluator.Accuracy.ToString("F2") + "%";
+            string progressInformation = $"The best classifier has an accuracy of {testAccuracyFormatted} on the test set.";
+            progressListBox.Items.Add(progressInformation);
+
+            stopOptimizerButton.Enabled = true; // A bit ugly, should wait for the
+        }*/
+
         private void stopOptimizerButton_Click(object sender, EventArgs e)
         {
             stopOptimizerButton.Enabled = false;
             shouldStop = true; // Signal stop to computation loop
 
-            /*string outputFile = "10examples.csv";*/
+            // Set weights
+            testEvaluator.Weights = trainedWeights;
+
+            // Calculate scores
+            testEvaluator.MakeScores();
+
+            // Access the counts
+            int truePositiveCount = testEvaluator.TruePositive;
+            int falsePositiveCount = testEvaluator.FalsePositive;
+            int trueNegativeCount = testEvaluator.TrueNegative;
+            int falseNegativeCount = testEvaluator.FalseNegative;
+
+            // Calculate evaluation metrics
+            double accuracy = (double)(truePositiveCount + trueNegativeCount) /
+                              (truePositiveCount + falsePositiveCount +
+                               trueNegativeCount + falseNegativeCount);
+
+            double precision = (double)truePositiveCount /
+                               (truePositiveCount + falsePositiveCount);
+
+            double recall = (double)truePositiveCount /
+                            (truePositiveCount + falseNegativeCount);
+
+            double f1Score = 2 * (precision * recall) / (precision + recall);
+
+            // Print evaluation metrics and counts
+            progressListBox.Items.Add("");
+            progressListBox.Items.Add("Evaluation Metrics:");
+            progressListBox.Items.Add($"Accuracy: {accuracy}");
+            progressListBox.Items.Add($"Precision: {precision}");
+            progressListBox.Items.Add($"Recall: {recall}");
+            progressListBox.Items.Add($"F1 Score: {f1Score}");
+            progressListBox.Items.Add($"True Positive: {truePositiveCount}");
+            progressListBox.Items.Add($"False Positive: {falsePositiveCount}");
+            progressListBox.Items.Add($"True Negative: {trueNegativeCount}");
+            progressListBox.Items.Add($"False Negative: {falseNegativeCount}");
+
+            
             testEvaluator.Evaluate();
-            // Stop the optimizer here.
+
             string testAccuracyFormatted = testEvaluator.Accuracy.ToString("F2") + "%";
-            string progressInformation = $"Test Set Accuracy: {testAccuracyFormatted} ";
+            string progressInformation = $"The best classifier has an accuracy of {testAccuracyFormatted} on the test set.";
             progressListBox.Items.Add(progressInformation);
 
-
-            // For simplicity (even though one may perhaps resume the optimizer), at this
-            // point, evaluate the best classifier (= best validation performance) over
-            // the *test* set, and print the accuracy to the screen (in a thread-safe
-            // manner, and with proper (clear) formatting).
-
-            stopOptimizerButton.Enabled = true; // A bit ugly, should wait for the
-            // optimizer to actually stop, but that's OK, it will stop quickly.
+            stopOptimizerButton.Enabled = true;
         }
+
+
     }
 }

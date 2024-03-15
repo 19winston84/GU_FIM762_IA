@@ -1,0 +1,105 @@
+Initial prompt
+Hey! Today you will be an great assistant to a doctor, nurse or counsellor who need help creating a schedule for a patient. The doctor, nurse or counsellor will input what is planned line event by event, maybe there are going to be two events in per input. In case of mistakes take note and correct it. The doctor, nurse or counsellor will tell you when the scheduling is finished. Then you may proceed in creating the whole schedule for the day. If you understand answer with "Hi im your virtual scheduling assistant, how may I help you today?".
+
+ChatGPT
+Hi! I'm your virtual scheduling assistant, how may I help you today?
+
+User
+I need assistance in organizing a daily agenda for Mr. Patel, can you help?
+
+ChatGPT
+Of course! I'd be happy to assist you in organizing Mr. Patel's daily agenda. Please provide me with the events or tasks you'd like to schedule for him, and we can begin creating his schedule.
+
+User
+Mr. Patel ought to get up at 8:00 sharp.
+
+ChatGPT
+Got it. Mr. Patel will start his day by getting up at 8:00 AM. What would you like to schedule next?
+
+User
+After that, Mr. Patel should have a shower at fifteen minutes past eight.
+
+ChatGPT
+Understood. Mr. Patel will have a shower at 8:15 AM. What's next on the agenda?
+
+User
+After that, breakfast for Mr. Patel will be served thirty minutes afterward.
+
+ChatGPT
+Great, Mr. Patel's breakfast will be served at 8:45 AM. What's the next event or task we need to schedule?
+
+User
+Mr. Patel has a light exercise session scheduled between 9:45 and 10:30.
+
+ChatGPT
+Noted. Mr. Patel's light exercise session will take place from 9:45 AM to 10:30 AM. What's next on the agenda?
+
+User
+Then, Mr. Patel can rest until 11:30 for a morning nap.
+
+ChatGPT
+Understood. Mr. Patel will have a morning nap scheduled from 10:30 AM to 11:30 AM. What's next after the morning nap?
+
+User
+Mr. Patel can expect lunch to be available from 12:00 to 13:00.
+
+ChatGPT
+Got it. Lunch for Mr. Patel will be available from 12:00 PM to 1:00 PM. What's the next event or task we need to schedule?
+
+User
+After the midday meal, Mr. Patel will go for a walk with Nurse Brown.
+
+ChatGPT
+Certainly. Mr. Patel's walk with Nurse Brown will be scheduled after lunch. May I confirm the time for the walk?
+
+User
+After that, Mr. Patel has an afternoon nap scheduled from 3:00 until 4:30.
+
+ChatGPT
+Noted. Mr. Patel's afternoon nap will be scheduled from 3:00 PM until 4:30 PM. What's next on the agenda?
+
+User
+Mr. Patel can expect an early dinner today at 17:00 and bedtime is as usual, planned for 21:30.
+
+ChatGPT
+Understood. Mr. Patel will have an early dinner at 5:00 PM, and bedtime is scheduled for 9:30 PM as usual.
+
+Here's the summarized daily agenda for Mr. Patel:
+
+8:00 AM: Wake up
+8:15 AM: Shower
+8:45 AM: Breakfast
+9:45 AM - 10:30 AM: Light exercise session
+10:30 AM - 11:30 AM: Morning nap
+12:00 PM - 1:00 PM: Lunch
+Afternoon: Walk with Nurse Brown (Time to be confirmed)
+3:00 PM - 4:30 PM: Afternoon nap
+5:00 PM: Early dinner
+9:30 PM: Bedtime
+Is there anything else you'd like to add or adjust in the schedule?
+
+User
+No, actually bedtime is at 22:30. I’m sorry.
+
+ChatGPT
+No problem at all. I've updated Mr. Patel's bedtime to 10:30 PM.
+
+Here's the revised schedule:
+
+8:00 AM: Wake up
+8:15 AM: Shower
+8:45 AM: Breakfast
+9:45 AM - 10:30 AM: Light exercise session
+10:30 AM - 11:30 AM: Morning nap
+12:00 PM - 1:00 PM: Lunch
+Afternoon: Walk with Nurse Brown (Time to be confirmed)
+3:00 PM - 4:30 PM: Afternoon nap
+5:00 PM: Early dinner
+10:30 PM: Bedtime
+Is there anything else you'd like to adjust before finalizing the schedule?
+
+User
+That wraps it up.
+
+ChatGPT
+Great! Mr. Patel's daily schedule is all set. If you need any further assistance or adjustments in the future, feel free to reach out. Have a wonderful day!

@@ -1,0 +1,94 @@
+Hey! Today you will be an great assistant to a doctor, nurse or counsellor who need help creating a schedule for a patient. The doctor, nurse or counsellor will input what is planned line event by event, maybe there are going to be two events in per input. In case of mistakes take note and correct it. The doctor, nurse or counsellor will tell you when the scheduling is finished. Then you may proceed in creating the whole schedule for the day. If you understand answer with "Hi im your virtual scheduling assistant, how may I help you today?".
+
+ChatGPT
+Hi, I'm your virtual scheduling assistant. How may I help you today?
+
+User
+Please help me to set up a daily schedule for Mr. Gray?
+
+ChatGPT
+Of course! Could you please provide me with the events you have planned for Mr. Gray today? We'll start by outlining his schedule.
+
+User
+Mr. Gray needs to rise at 8:00 in the morning.
+
+ChatGPT
+Got it. Mr. Gray will rise at 8:00 in the morning. What's the next event in his schedule?
+
+User
+Following that, he should take a shower at 8:15
+
+ChatGPT
+Understood. Mr. Gray will take a shower at 8:15. Are there any other events planned for him?
+
+User
+I’m sorry meant 8:30, not 8:15.
+
+ChatGPT
+No problem. Mr. Gray will take a shower at 8:30 instead of 8:15. Is there anything else you'd like to add to his schedule?
+
+User
+Following that, breakfast will be served thirty minutes later.
+
+ChatGPT
+Got it. Breakfast will be served at 9:00. Is there anything else you'd like to include in Mr. Gray's schedule?
+
+User
+From 9:45 to 10:30, there is a light exercise scheduled
+
+ChatGPT
+Understood. Mr. Gray has a light exercise session scheduled from 9:45 to 10:30. What's next on his schedule?
+
+User
+Afterward, he can have a morning nap until 11:30.
+
+ChatGPT
+Got it. Mr. Gray will have a morning nap from after his exercise session until 11:30. What's the next event planned for him?
+
+User
+From 12:00 to 13:00, lunch will be provided.
+
+ChatGPT
+Thank you for the information. Lunch will be provided for Mr. Gray from 12:00 to 13:00. Is there anything else you'd like to include in his schedule?
+
+User
+Following lunch, he will take a walk with Nurse Johnson.
+
+ChatGPT
+Understood. After lunch, Mr. Gray will take a walk with Nurse Johnson. What's the next event in his schedule?
+
+User
+Following that, there's a planned afternoon nap from 3:00 to 4:30.
+
+ChatGPT
+Got it. Mr. Gray has a planned afternoon nap from 3:00 to 4:30. Is there anything else you'd like to add to his schedule?
+
+User
+Today, an early dinner is on the menu at 5:00 for Mr. Gray.
+
+ChatGPT
+Thank you for the update. Mr. Gray will have an early dinner at 5:00 today. What's the next event in his schedule?
+
+User
+As per the usual routine, bedtime is scheduled for Mr. Gray at 21:30.
+
+ChatGPT
+Understood. Mr. Gray's bedtime is scheduled for 21:30 as usual. Is there anything else you'd like to adjust or add to his schedule?
+
+User
+All set.
+
+ChatGPT
+Great! Here's Mr. Gray's daily schedule:
+
+8:00 - Rise
+8:30 - Take a shower
+9:00 - Breakfast
+9:45 to 10:30 - Light exercise
+10:30 to 11:30 - Morning nap
+12:00 to 13:00 - Lunch
+After lunch - Walk with Nurse Johnson
+15:00 to 16:30 - Afternoon nap
+17:00 - Early dinner
+21:30 - Bedtime
+If there are any changes or additions needed, feel free to let me know.

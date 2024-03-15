@@ -14,14 +14,27 @@ namespace NLP.TextClassification
         public TextClassificationDataSet DataSet { get; set; }
         public List<double> Weights {  get; set; }
         public double Accuracy { get; set; }
+
+        public int TruePositive  { get; set; }
+        public int FalsePositive  { get; set; }
+        public int TrueNegative  { get; set; }
+        public int FalseNegative  { get; set; }
+
+
         public PerceptronEvaluator(TextClassificationDataSet dataSet, Vocabulary vocabulary) 
         {
             DataSet = dataSet;
             Vocabulary = vocabulary;
             Weights = null;
             Accuracy = 0;
+            TruePositive = 0;
+            FalsePositive = 0;
+            FalseNegative = 0;
+            TrueNegative = 0;
+            
         }
 
+        
         public void Evaluate()
         {
             int correctCounter = 0;
@@ -39,6 +52,44 @@ namespace NLP.TextClassification
                 }
             }
              Accuracy = (double)correctCounter / totalCounter;
+        }
+
+
+        public void MakeScores()
+        {
+
+            int truePositive = 0;
+            int falsePositive = 0;
+            int trueNegative = 0;
+            int falseNegative = 0;
+
+            foreach (TextClassificationDataItem review in DataSet.ItemList)
+            {
+                perceptronClassifier.WeightList = Weights;
+                int output = perceptronClassifier.Classify(review.ReviewAsVocabularyIndexes);
+                int target = review.ClassLabel;
+
+                if (output == target && target == 0)
+                {
+                    trueNegative++;
+                }
+                else if (output == target && target == 1)
+                {
+                    truePositive++;
+                }
+                else if (output != target && target == 0)
+                {
+                    falsePositive++;
+                }
+                else
+                {
+                    falseNegative++;
+                }
+            }
+            TruePositive = truePositive;
+            FalsePositive = falsePositive;
+            TrueNegative = trueNegative;
+            FalseNegative = falseNegative;
         }
 
         public void EvaluateAndStoreExamples(string outputFile)

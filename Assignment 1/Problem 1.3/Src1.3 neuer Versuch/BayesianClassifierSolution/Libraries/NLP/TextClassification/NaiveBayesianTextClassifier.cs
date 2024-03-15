@@ -46,16 +46,12 @@ namespace NLP.TextClassification
                     double class0TokenProb = (class0LabelCounts + 1) / class0Denominator;
                     class0LabelProbability += Math.Log(class0TokenProb);
                     
-
-
                     double class1LabelCounts = bagOfWords[tokenData.Token.Spelling].Class1Count;
                     double class1TokenProb = (class1LabelCounts + 1) / class1Denominator;
                     class1LabelProbability += Math.Log(class1TokenProb);
                     
-
                 }
                 
-
             }
             if (class0LabelProbability > class1LabelProbability)
             {

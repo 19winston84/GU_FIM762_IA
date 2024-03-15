@@ -95,13 +95,9 @@ namespace POSTaggingApplication
                     tmpTokenDataList.Add(tokenData);
                 }
             }
-            // Sort in alphabetical order, then by tag (also in alphabetical order)...
-            // This takes a few seconds to run: It would have been more elegant (and easy) to put the
-            // computation in a separate thread, but I didn't bother to do that here, as it would make
-            // the code slightly more complex. Here, it is OK that the application freezes for a few
-            // seconds while it is sorting the data.
+            
             tmpTokenDataList = tmpTokenDataList.OrderBy(t => t.Token.Spelling).ThenBy(t => t.Token.POSTag).ToList();
-            // ... then merge
+            
             List<TokenData> tokenDataList = MergeTokens(tmpTokenDataList);
             return tokenDataList;
         }
@@ -134,7 +130,7 @@ namespace POSTaggingApplication
                     }
                     index++;
                 }
-                mergedDataSet.Add(currentTokenData); // Add the final element as well ...
+                mergedDataSet.Add(currentTokenData); 
             }
             return mergedDataSet;
         }
@@ -238,7 +234,7 @@ namespace POSTaggingApplication
                 totalCount += sentence.TokenDataList.Count;
                 foreach (TokenData tokenData in sentence.TokenDataList)
                 {
-                    string word = tokenData.Token.Spelling.ToLower(); // Normalize word to lowercase
+                    string word = tokenData.Token.Spelling.ToLower(); 
                     string posTag = tokenData.Token.POSTag;
 
                     // Update posTagCounts
@@ -285,12 +281,11 @@ namespace POSTaggingApplication
             int maxPosTagLength = posTagCounts.Keys.Any() ? posTagCounts.Keys.Max(tag => tag.Length) : 0;
             int maxCountLength = posTagCounts.Values.Any() ? posTagCounts.Values.Max().ToString().Length : 0;
 
-            // Display total count summary with alignment
+            
             string totalCountLine = $"Total tokens:".PadRight(maxPosTagLength + maxCountLength + 4) + $"{totalCount}";
             resultsListBox.Items.Add(totalCountLine);
 
-            // Display the counts and proportions for each POS tag, aligned
-            foreach (var posTagCount in posTagCounts)
+            foreach (var posTagCount in posTagCounts.OrderByDescending(tagCount => tagCount.Value))
             {
                 double proportion = (double)posTagCount.Value / totalCount;
                 string posTagPadded = posTagCount.Key.PadRight(maxPosTagLength);
@@ -298,8 +293,7 @@ namespace POSTaggingApplication
                 resultsListBox.Items.Add($"{posTagPadded}: {countPadded} ({proportion:P2})");
             }
 
-            // New Section: Display the fraction of words associated with different numbers of POS tags
-            resultsListBox.Items.Add(string.Empty); // Add an empty line for better readability
+            resultsListBox.Items.Add(""); 
             resultsListBox.Items.Add("Words by number of associated POS tags:");
             foreach (var tagCountEntry in tagsToWordCount.OrderBy(tagCount => tagCount.Key))
             {
@@ -310,20 +304,17 @@ namespace POSTaggingApplication
             // Initialize a list to store words with 6 tokens
             List<string> wordsWithSixTokens = new List<string>();
 
-            // Iterate over the wordToTags dictionary
             foreach (var entry in wordToTags)
             {
-                // Check if the set of POS tags for the word contains 6 elements
                 if (entry.Value.Count == 6)
                 {
-                    // Add the word to the list
                     wordsWithSixTokens.Add(entry.Key);
                 }
             }
-
-            // Output the list of words with 6 tokens
+            resultsListBox.Items.Add("");
             foreach (string word in wordsWithSixTokens)
             {
+
                 resultsListBox.Items.Add($"The word with six tokens is '{word}'");
             }
 
@@ -349,7 +340,7 @@ namespace POSTaggingApplication
 
         private void runUnigramTaggerButton_Click(object sender, EventArgs e)
         {
-            resultsListBox.Items.Clear(); // Clear the list box before displaying new results
+            resultsListBox.Items.Clear(); 
 
             if (testDataSet == null || unigramTagger == null)
             {
@@ -378,16 +369,11 @@ namespace POSTaggingApplication
 
             if (totalPredictions > 0)
             {
-                // Calculate accuracy
                 double accuracy = (double)correctPredictions / totalPredictions;
 
-                // Display accuracy
                 resultsListBox.Items.Add($"The unigram accuracy is {accuracy:P2}");
             }
-            else
-            {
-                resultsListBox.Items.Add("No predictions were made.");
-            }
+            
         }
 
 
